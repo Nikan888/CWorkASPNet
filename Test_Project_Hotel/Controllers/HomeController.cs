@@ -10,9 +10,16 @@ namespace Test_Project_Hotel.Controllers
 {
     public class HomeController : Controller
     {
+        private HotelContext db;
+        public HomeController(HotelContext _db)
+        {
+            db = _db;
+        }
         public IActionResult Index()
         {
-            return View();
+            var client = db.Clients.ToList();
+
+            return View(client);
         }
 
         public IActionResult About()
