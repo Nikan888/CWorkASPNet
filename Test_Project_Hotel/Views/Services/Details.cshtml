@@ -1,0 +1,58 @@
+﻿@model Test_Project_Hotel.Models.Service
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Details</h2>
+<div>
+    <h4>Услуга</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ServiceName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ServiceName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ServiceDescription)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ServiceDescription)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EntryDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EntryDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.DepartureDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DepartureDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Client.ClientFIO)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Client.ClientFIO)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Room.RoomType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Room.RoomType)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Worker.WorkerFIO)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Worker.WorkerFIO)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ServiceID">Редактировать</a> |
+    <a asp-action="Index">Вернуться к списку</a>
+</div>

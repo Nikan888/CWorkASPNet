@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using System;
+using Test_Project_Hotel.Data;
 using Test_Project_Hotel.Models;
 
 namespace Test_Project_Hotel.Migrations

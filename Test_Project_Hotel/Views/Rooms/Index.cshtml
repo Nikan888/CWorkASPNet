@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Test_Project_Hotel.Models.Room>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Index</h2>
+<p>
+    <a asp-action="Create">Создать</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomCapacity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomPrice)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomCapacity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomPrice)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.RoomID">Редактировать</a> |
+                <a asp-action="Details" asp-route-id="@item.RoomID">Подробно</a> |
+                <a asp-action="Delete" asp-route-id="@item.RoomID">Удалить</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

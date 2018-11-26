@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Test_Project_Hotel.Models.Service>
+@{
+    ViewData["Title"] = "Услуги";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Услуги</h2>
+<p>
+    <a asp-action="Create">Создать</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EntryDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DepartureDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Client.ClientFIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Room.RoomType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Worker.WorkerFIO)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EntryDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartureDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Client.ClientFIO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Room.RoomType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Worker.WorkerFIO)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ServiceID">Редактировать</a> |
+                <a asp-action="Details" asp-route-id="@item.ServiceID">Подробно</a> |
+                <a asp-action="Delete" asp-route-id="@item.ServiceID">Удалить</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

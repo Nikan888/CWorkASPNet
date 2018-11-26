@@ -1,0 +1,37 @@
+﻿@model Test_Project_Hotel.Models.Client
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Редактировать</h2>
+<h4>Client</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ClientID" />
+            <div class="form-group">
+                <label asp-for="ClientFIO" class="control-label"></label>
+                <input asp-for="ClientFIO" class="form-control" />
+                <span asp-validation-for="ClientFIO" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClientPassportData" class="control-label"></label>
+                <input asp-for="ClientPassportData" class="form-control" />
+                <span asp-validation-for="ClientPassportData" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Вернуться к списку</a>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

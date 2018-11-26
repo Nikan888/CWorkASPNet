@@ -1,0 +1,78 @@
+﻿@using Test_Project_Hotel.ViewModels
+@model ServicesViewModel
+@{
+    ViewData["Title"] = "Услуги";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Услуги</h2>
+@using (Html.BeginForm("Index", "FilteredServices", FormMethod.Post))
+{
+<fieldset>
+    ФИО клиента: @Html.TextBox("ClientFIO", Model.ServiceViewModel.ClientFIO)
+    Тип номера: @Html.TextBox("RoomType", Model.ServiceViewModel.RoomType)
+    ФИО сотрудника: @Html.TextBox("WorkerFIO", Model.ServiceViewModel.WorkerFIO)
+    <input type="submit" value="Найти" />
+</fieldset>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceViewModel.ServiceName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceViewModel.ServiceDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceViewModel.EntryDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ServiceViewModel.DepartureDate)
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder=@Model.ServiceViewModel.SortViewModel.ClientFioSort>
+                    @Html.DisplayNameFor(model => model.ServiceViewModel.ClientFIO)
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder=@Model.ServiceViewModel.SortViewModel.RoomTypeSort>
+                    @Html.DisplayNameFor(model => model.ServiceViewModel.RoomType)
+                </a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-sortOrder=@Model.ServiceViewModel.SortViewModel.WorkerFioSort>
+                    @Html.DisplayNameFor(model => model.ServiceViewModel.WorkerFIO)
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Services)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ServiceDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EntryDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartureDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Client.ClientFIO)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Room.RoomType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Worker.WorkerFIO)
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+

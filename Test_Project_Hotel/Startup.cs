@@ -1,21 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Test_Project_Hotel.Models;
 using Microsoft.EntityFrameworkCore;
+using Test_Project_Hotel.Middleware;
+using Test_Project_Hotel.Data;
+using Test_Project_Hotel.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Test_Project_Hotel
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -25,6 +29,10 @@ namespace Test_Project_Hotel
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<HotelContext>(options => options.UseSqlServer(connection));
+            //добавление сессии
+            services.AddDistributedMemoryCache();
+            services.AddSession();
+
             services.AddMvc();
         }
 
@@ -33,15 +41,22 @@ namespace Test_Project_Hotel
         {
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            // добавляем поддержку статических файлов
             app.UseStaticFiles();
+
+            // добавляем поддержку сессий
+            app.UseSession();
+
+            // добавляем компонент middleware по инициализации базы данных и производим инициализацию базы
+            app.UseDbInitializer();
 
             app.UseMvc(routes =>
             {

@@ -1,0 +1,43 @@
+﻿@model Test_Project_Hotel.Models.Room
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Удаление</h2>
+<h3>Вы уверены, что хотите удалить это?</h3>
+<div>
+    <h4>Room</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomType)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RoomType)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomCapacity)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RoomCapacity)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomDescription)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RoomDescription)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.RoomPrice)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RoomPrice)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="RoomID" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Вернуться к списку</a>
+    </form>
+</div>

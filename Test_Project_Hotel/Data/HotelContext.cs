@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Test_Project_Hotel.Models;
 
-namespace Test_Project_Hotel.Models
+namespace Test_Project_Hotel.Data
 {
     public class HotelContext : DbContext
     {

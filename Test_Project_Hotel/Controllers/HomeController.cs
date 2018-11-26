@@ -1,44 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Test_Project_Hotel.Models;
+using Test_Project_Hotel.ViewModels;
+using Test_Project_Hotel.Data;
+using Test_Project_Hotel.Infrastructure.Filters;
 
 namespace Test_Project_Hotel.Controllers
 {
+    [ExceptionFilter]
+    [TypeFilter(typeof(TimingLogAttribute))]
     public class HomeController : Controller
     {
-        private HotelContext db;
-        public HomeController(HotelContext _db)
+        private HotelContext _db;
+        public HomeController(HotelContext db)
         {
-            db = _db;
+            _db = db;
         }
         public IActionResult Index()
         {
-            var client = db.Clients.ToList();
+            var clients = _db.Clients.Take(10).ToList();
+            var rooms = _db.Rooms.Take(10).ToList();
+            var workers = _db.Workers.Take(10).ToList();
+            List<ServiceViewModel> services = _db.Services
+                .OrderByDescending(d => d.EntryDate)
+                .Select(t => new ServiceViewModel { ServiceID = t.ServiceID, ServiceName = t.ServiceName, ServiceDescription = t.ServiceDescription, EntryDate = t.EntryDate, DepartureDate = t.DepartureDate, ClientFIO = t.Client.ClientFIO, RoomType = t.Room.RoomType, WorkerFIO = t.Worker.WorkerFIO })
+                .Take(10)
+                .ToList();
 
-            return View(client);
-        }
-
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            HomeViewModel homeViewModel = new HomeViewModel { Clients = clients, Rooms = rooms, Workers = workers, Services = services };
+            return View(homeViewModel);
         }
     }
 }

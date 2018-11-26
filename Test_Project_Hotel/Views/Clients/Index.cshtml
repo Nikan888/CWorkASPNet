@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Test_Project_Hotel.Models.Client>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Index</h2>
+<p>
+    <a asp-action="Create">Создать</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ClientFIO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ClientPassportData)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClientFIO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClientPassportData)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ClientID">Редактировать</a> |
+                    <a asp-action="Details" asp-route-id="@item.ClientID">Подробно</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ClientID">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

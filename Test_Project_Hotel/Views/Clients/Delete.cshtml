@@ -1,0 +1,32 @@
+﻿@model Test_Project_Hotel.Models.Client
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Удаление</h2>
+<h3>Вы уверены, что хотите удалить это?</h3>
+<div>
+    <h4>Client</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ClientFIO)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClientFIO)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.ClientPassportData)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.ClientPassportData)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ClientID" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Вернуться к списку</a>
+    </form>
+</div>
+
