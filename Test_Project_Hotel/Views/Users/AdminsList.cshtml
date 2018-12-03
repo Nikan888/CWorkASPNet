@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Test_Project_Hotel.Models.User>
+@{
+    ViewBag.Title = "List of administrators";
+}
+<h2>Admin management</h2>
+<table class="table table-hover table-bordered text-center" id="tblemps">
+    <thead>
+        <tr>
+            <th style="text-align: center;">
+                Email
+            </th>
+            <th style="text-align: center;">
+                <a class="btn btn-primary" asp-action="CreateAdmin">Add admin</a><br />
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td style="text-align: center;">
+                    @user.Email
+                </td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                        <a class="btn btn-sm btn-default" asp-action="ChangePassword" asp-route-id="@user.Id">Change password</a>
+                        <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
+                    </form>
+                </td>
+            </tr>
+        }
+</table>
+<a asp-action="Index" style="float: right;">Back</a>
+

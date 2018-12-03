@@ -1,0 +1,58 @@
+﻿@model Test_Project_Hotel.ViewModels.Users.UsersListViewModel
+@{
+    ViewData["Title"] = "User and Administrator Management ";
+}
+<h2>User and administrator management </h2>
+@*<a asp-action="AdminsList">Список администраторов</a>*@
+<a class="glyphicon glyphicon-user" asp-action="AdminsList"> List of admins </a>
+<table class="table table-hover table-bordered text-center" id="tblemps">
+    <thead>
+        <tr>
+            <th style="text-align: center;">
+                Email
+            </th>
+            <th style="text-align: center;">
+                <a class="btn btn-primary" asp-action="CreateUser">Add user</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>
+                    @user.Email
+                </td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@user.Id" method="post">
+                        <a class="btn btn-sm btn-default" asp-action="ChangePassword" asp-route-id="@user.Id">Change password</a>
+                        <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="EditUser" asp-route-id="@user.Id"></a>
+                        <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
+                    </form>
+                </td>
+            </tr>
+        }
+</table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-default btn">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Back
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-default btn">
+        Forward
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+@if (Model.PageViewModel.TotalPages > 1)
+{
+    <br />
+    <b>Page @Model.PageViewModel.PageNumber from @Model.PageViewModel.TotalPages</b>
+}

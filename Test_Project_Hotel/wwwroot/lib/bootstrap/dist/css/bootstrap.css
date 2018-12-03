@@ -18,7 +18,14 @@ details,
 figcaption,
 figure,
 footer,
-header,
+/* Style the header */
+header {
+    background-color: #666;
+    padding: 30px;
+    text-align: center;
+    font-size: 35px;
+    color: white;
+}
 hgroup,
 main,
 menu,

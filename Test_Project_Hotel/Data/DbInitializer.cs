@@ -13,7 +13,7 @@ namespace Test_Project_Hotel.Data
             db.Database.EnsureCreated();
 
             // Проверка занесены ли клиенты
-            if (db.Clients.Any())
+            if (db.Clients.Any() || db.Workers.Any() || db.Rooms.Any() || db.Services.Any())
             {
                 return;   // База данных инициализирована
             }

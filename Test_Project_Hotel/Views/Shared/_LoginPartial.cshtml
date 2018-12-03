@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Test_Project_Hotel.Models
+@using Microsoft.AspNetCore.Http
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@if (SignInManager.IsSignedIn(User))
+{
+    if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
+    {
+        <ul class="nav navbar-nav">
+            <li><a asp-controller="Services" asp-action="Index" class="text-left">Services</a></li>
+            <li> <a asp-controller="Rooms" asp-action="Index" class="text-left">Rooms</a></li>
+            <li><a asp-controller="Clients" asp-action="Index" class="text-left">Clients</a></li>
+            <li><a asp-controller="Workers" asp-action="Index" class="text-left">Workers</a></li>
+            <li><a asp-controller="Users" asp-action="Index" class="text-left">Users</a></li>
+        </ul>
+    }
+    if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "user"))
+    {
+        <ul class="nav navbar-nav">
+            <li><a asp-controller="Rooms" asp-action="Index" class="text-left">Rooms</a></li>
+            <li><a asp-controller="Services" asp-action="Index" class="text-left">Services</a></li>
+            <li> <a asp-controller="Clients" asp-action="Index" class="text-left">Clients</a></li>
+        </ul>
+    }
+    <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button>
+            </li>
+        </ul>
+    </form>
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
+        <li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+    </ul>
+}

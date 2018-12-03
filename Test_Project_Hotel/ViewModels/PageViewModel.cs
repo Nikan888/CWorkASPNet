@@ -8,8 +8,13 @@ namespace Test_Project_Hotel.ViewModels
     //Класс для хранения информации о страницах разбиения
     public class PageViewModel
     {
-        public int PageNumber { get; private set; }
+        public int? PageNumber { get; set; } = null;
         public int TotalPages { get; private set; }
+
+        public PageViewModel()
+        {
+
+        }
 
         public PageViewModel(int count, int pageNumber, int pageSize)
         {

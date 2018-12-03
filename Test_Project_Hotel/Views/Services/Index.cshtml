@@ -1,41 +1,39 @@
-﻿@model IEnumerable<Test_Project_Hotel.Models.Service>
+﻿@model Test_Project_Hotel.ViewModels.Services.ServicesListViewModel
 @{
-    ViewData["Title"] = "Услуги";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Service management";
 }
-<h2>Услуги</h2>
-<p>
-    <a asp-action="Create">Создать</a>
-</p>
-<table class="table">
+<h2>Service management</h2>
+<table class="table table-hover table-bordered text-center" id="tblemps">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceName)
+            <th style="text-align: center;">
+                Service name
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ServiceDescription)
+            <th style="text-align: center;">
+                Service description
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EntryDate)
+            <th style="text-align: center;">
+                Entry date
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DepartureDate)
+            <th style="text-align: center;">
+                Departure date
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Client.ClientFIO)
+            <th style="text-align: center;">
+                Client FIO
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Room.RoomType)
+            <th style="text-align: center;">
+                Room type
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Worker.WorkerFIO)
+            <th style="text-align: center;">
+                Worker FIO
             </th>
-            <th></th>
+            <th style="text-align: center;">
+                <a class="btn btn-primary" asp-action="Create">Add service</a>
+            </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Services)
         {
         <tr>
             <td>
@@ -51,20 +49,44 @@
                 @Html.DisplayFor(modelItem => item.DepartureDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Client.ClientFIO)
+                @Html.DisplayFor(modelItem => item.ClientFIO)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Room.RoomType)
+                @Html.DisplayFor(modelItem => item.RoomType)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Worker.WorkerFIO)
+                @Html.DisplayFor(modelItem => item.WorkerFIO)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.ServiceID">Редактировать</a> |
-                <a asp-action="Details" asp-route-id="@item.ServiceID">Подробно</a> |
-                <a asp-action="Delete" asp-route-id="@item.ServiceID">Удалить</a>
+                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                    <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.Id"></a>
+                    <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
+                </form>
             </td>
         </tr>
         }
     </tbody>
 </table>
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+       class="btn btn-default btn">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        Back
+    </a>
+}
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+       class="btn btn-default btn">
+        Forward
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+@if (Model.PageViewModel.TotalPages > 1)
+{
+    <br />
+    <b>Page @Model.PageViewModel.PageNumber from @Model.PageViewModel.TotalPages</b>
+}

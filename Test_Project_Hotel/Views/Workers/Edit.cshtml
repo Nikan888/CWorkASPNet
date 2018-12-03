@@ -1,35 +1,23 @@
-﻿@model Test_Project_Hotel.Models.Worker
+﻿@model Test_Project_Hotel.ViewModels.Workers.EditWorkerViewModel
 @{
-    ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit worker ";
 }
-<h2>Редактировать</h2>
-<h4>Worker</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="WorkerID" />
-            <div class="form-group">
-                <label asp-for="WorkerFIO" class="control-label"></label>
-                <input asp-for="WorkerFIO" class="form-control" />
-                <span asp-validation-for="WorkerFIO" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="WorkerPost" class="control-label"></label>
-                <input asp-for="WorkerPost" class="form-control" />
-                <span asp-validation-for="WorkerPost" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Сохранить" class="btn btn-default" />
-            </div>
-        </form>
+<h2>Edit worker </h2>
+<form asp-action="Edit">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="WorkerFIO" class="control-label">Worker FIO</label>
+            <input type="text" asp-for="WorkerFIO" class="form-control" />
+            <label asp-for="WorkerPost" class="control-label">Worker's post</label>
+            <input type="text" asp-for="WorkerPost" class="form-control" />
+        </div>
     </div>
-</div>
-<div>
-    <a asp-action="Index">Вернуться к списку</a>
-</div>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <input type="submit" value="Edit" class="btn btn-default" />
+        </div>
+    </div>
+</form>
+<a asp-action="Index" style="float: right;">Back</a>

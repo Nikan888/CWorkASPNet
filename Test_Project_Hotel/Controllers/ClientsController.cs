@@ -1,149 +1,146 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Test_Project_Hotel.Data;
-using Test_Project_Hotel.Infrastructure.Filters;
+using Test_Project_Hotel.ViewModels.Clients;
 using Test_Project_Hotel.Models;
+using Test_Project_Hotel.ViewModels;
+using System.Collections.Generic;
 
 namespace Test_Project_Hotel.Controllers
 {
-    [TypeFilter(typeof(TimingLogAttribute))]
+    [Authorize]
     public class ClientsController : Controller
     {
-        private readonly HotelContext _context;
+        HotelContext db;
 
         public ClientsController(HotelContext context)
         {
-            _context = context;
+            db = context;
         }
 
-        // GET: Clients
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int page = 1)
         {
-            return View(await _context.Clients.ToListAsync());
+            int pageSize = 5;
+            List<ClientViewModel> list = new List<ClientViewModel>();
+            var clients = db.Clients;
+            foreach (var client in clients)
+            {
+                list.Add(new ClientViewModel
+                {
+                    Id = client.ClientID,
+                    ClientFIO = client.ClientFIO,
+                    ClientPassportData = client.ClientPassportData
+                });
+            }
+            IQueryable<ClientViewModel> filterList = list.AsQueryable();
+            var count = filterList.Count();
+            var items = filterList.Skip((page - 1) * pageSize).
+                Take(pageSize).ToList();
+            ClientsListViewModel model = new ClientsListViewModel
+            {
+                PageViewModel = new PageViewModel(count, page, pageSize),
+                Clients = items
+            };
+            return View(model);
         }
 
-        // GET: Clients/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var client = await _context.Clients
-                .SingleOrDefaultAsync(m => m.ClientID == id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            return View(client);
-        }
-
-        // GET: Clients/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ClientID,ClientFIO,ClientPassportData")] Client client)
+        public async Task<IActionResult> Create(CreateClientViewModel model)
         {
-            if (ModelState.IsValid)
+            int er = 0;
+            if (ModelState.IsValid && (er = db.Clients.Count(p => p.ClientFIO == model.ClientFIO)) == 0)
             {
-                _context.Add(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                Client client = new Client
+                {
+                    ClientFIO = model.ClientFIO,
+                    ClientPassportData = model.ClientPassportData
+                };
+                await db.Clients.AddAsync(client);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-            return View(client);
+            if (er != 0)
+                ModelState.AddModelError("ClientFIO", "Record with the same FIO already exists");
+            return View(model);
         }
 
-        // GET: Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id != null)
             {
-                return NotFound();
+                Client client = await db.Clients.FirstOrDefaultAsync(t => t.ClientID == id);
+                if (client == null)
+                {
+                    ErrorViewModel error = new ErrorViewModel
+                    {
+                        RequestId = "Error! There is no record in the database with the id passed = " + id
+                    };
+                    return View("Error", error);
+                }
+                EditClientViewModel model = new EditClientViewModel
+                {
+                    Id = client.ClientID,
+                    ClientFIO = client.ClientFIO,
+                    ClientPassportData = client.ClientPassportData
+                };
+                return View(model);
             }
-
-            var client = await _context.Clients.SingleOrDefaultAsync(m => m.ClientID == id);
-            if (client == null)
+            else
             {
-                return NotFound();
+                ErrorViewModel error = new ErrorViewModel { RequestId = "Error! Missing id in request parameters" };
+                return View("Error", error);
             }
-            return View(client);
         }
 
-        // POST: Clients/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ClientID,ClientFIO,ClientPassportData")] Client client)
+        public async Task<IActionResult> Edit(EditClientViewModel model)
         {
-            if (id != client.ClientID)
+            int er = 0;
+            Client client = await db.Clients.FirstOrDefaultAsync(t => t.ClientID == model.Id);
+            if (ModelState.IsValid && (model.ClientFIO == client.ClientFIO || (er = db.Clients.Count(p => p.ClientFIO == model.ClientFIO)) == 0))
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (client == null)
                 {
-                    _context.Update(client);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ClientExists(client.ClientID))
+                    ErrorViewModel error = new ErrorViewModel
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        RequestId = "Error! Empty model was sent"
+                    };
+                    return View("Error", error);
                 }
-                return RedirectToAction(nameof(Index));
+                client.ClientFIO = model.ClientFIO;
+                client.ClientPassportData = model.ClientPassportData;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-            return View(client);
+            if (er != 0)
+                ModelState.AddModelError("ClientFIO", "Record with the same FIO already exists");
+            return View(model);
         }
 
-        // GET: Clients/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            Client client = await db.Clients.FirstOrDefaultAsync(t => t.ClientID == id);
+            db.Clients.Remove(client);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            ErrorViewModel error = new ErrorViewModel
             {
-                return NotFound();
-            }
-
-            var client = await _context.Clients
-                .SingleOrDefaultAsync(m => m.ClientID == id);
-            if (client == null)
-            {
-                return NotFound();
-            }
-
-            return View(client);
+                RequestId = "For admin access only"
+            };
+            return View("Error", error);
         }
-
-        // POST: Clients/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var client = await _context.Clients.SingleOrDefaultAsync(m => m.ClientID == id);
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ClientExists(int id)
-        {
-            return _context.Clients.Any(e => e.ClientID == id);
-        }
-
     }
 }

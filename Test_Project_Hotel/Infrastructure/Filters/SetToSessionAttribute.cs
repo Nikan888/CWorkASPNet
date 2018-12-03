@@ -8,13 +8,15 @@ namespace Test_Project_Hotel.Infrastructure.Filters
     public class SetToSessionAttribute : Attribute, IActionFilter
     {
 
-        private string _name;//имя ключа
+        private string name;//имя ключа
+
         public SetToSessionAttribute(string name)
         {
-            _name = name;
+            this.name = name;
         }
 
-        // Выполняется до выполнения метода контроллера, но после привязки данных передаваемых в контроллер
+        // Выполняется до выполнения метода контроллера, но после привязки данных 
+        // передаваемых в контроллер
         public void OnActionExecuting(ActionExecutingContext context)
         {
 
@@ -23,17 +25,16 @@ namespace Test_Project_Hotel.Infrastructure.Filters
         // Выполняется после выполнения метода контроллера
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
             // считывание данных из ModelState и запись в сессию
             if (context.ModelState != null)
             {
                 foreach (var item in context.ModelState)
                 {
-                    dict.Add(item.Key, item.Value.AttemptedValue);
+                    dictionary.Add(item.Key, item.Value.AttemptedValue);
                 }
-                context.HttpContext.Session.Set(_name, dict);
+                context.HttpContext.Session.Set(name, dictionary);
             }
-
         }
     }
 }

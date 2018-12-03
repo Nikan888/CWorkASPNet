@@ -1,88 +1,22 @@
-﻿@model Test_Project_Hotel.ViewModels.HomeViewModel
-@{
-    ViewData["Title"] = "Главная страница";
+﻿@{
+    ViewData["Title"] = "Home Page";
 }
-<table border="1">
-    <caption>Клиенты</caption>
-    <tr>
-        <th>Код клиента</th>
-        <th>ФИО клиента</th>
-        <th>Пасспортные данные клиента</th>
-    </tr>
-    @foreach (var client in Model.Clients)
-    {
-    <tr>
-        <td>@client.ClientID</td>
-        <td>@client.ClientFIO</td>
-        <td>@client.ClientPassportData</td>
-        <td><a href="~/Clients/Edit/@client.ClientID">Редактировать</a></td>
-    </tr>
-    }
-</table>
-<table border="1">
-    <caption>Номера</caption>
-    <tr>
-        <th>Код номера</th>
-        <th>Тип номера</th>
-        <th>Вместимость номера</th>
-        <th>Описание номера</th>
-        <th>Стоимость номера</th>
-        <th></th>
-    </tr>
-    @foreach (var room in Model.Rooms)
-    {
-    <tr>
-        <td>@room.RoomID</td>
-        <td>@room.RoomType</td>
-        <td>@room.RoomCapacity</td>
-        <td>@room.RoomDescription</td>
-        <td>@room.RoomPrice</td>
-        <td><a href="~/Rooms/Edit/@room.RoomID">Редактировать</a></td>
-    </tr>
-    }
-</table>
-<table border="1">
-    <caption>Сотрудники</caption>
-    <tr>
-        <th>Код сотрудника</th>
-        <th>ФИО сотрудника</th>
-        <th>Должность сотрудника</th>
-        <th></th>
-    </tr>
-    @foreach (var worker in Model.Workers)
-    {
-    <tr>
-        <td>@worker.WorkerID</td>
-        <td>@worker.WorkerFIO</td>
-        <td>@worker.WorkerPost</td>
-        <td><a href="~/Workers/Edit/@worker.WorkerID">Редактировать</a></td>
-    </tr>
-    }
-</table>
-<table border="1">
-    <caption>Услуги</caption>
-    <tr>
-        <th>Код услуги</th>
-        <th>Название услуги</th>
-        <th>Описание услуги</th>
-        <th>Дата въезда</th>
-        <th>Дата выезда</th>
-        <th>Клиент</th>
-        <th>Номер</th>
-        <th>Сотрудник</th>
-    </tr>
-    @foreach (var service in Model.Services)
-    {
-    <tr>
-        <td>@service.ServiceID</td>
-        <td>@service.ServiceName</td>
-        <td>@service.ServiceDescription</td>
-        <td>@service.EntryDate.Date</td>
-        <td>@service.DepartureDate.Date</td>
-        <td>@service.ClientFIO</td>
-        <td>@service.RoomType</td>
-        <td>@service.WorkerFIO</td>
-        <td><a href="~/Services/Edit/@service.ServiceID">Редактировать</a></td>
-    </tr>
-    }
-</table>
+
+
+
+@if (User.Identity.IsAuthenticated)
+{
+    <h1>Welcome, @User.Identity.Name </h1>
+    
+    <form method="post" asp-controller="Account" asp-action="LogOff">
+        <input type="submit" value="Log out" />
+    </form>
+}
+else
+{
+    <header>
+        <h1>Welcome to ASP.Net Core Web application "Hotel"!</h1>
+    </header>
+
+    <h3>To proceed, you need to authorize</h3>
+}

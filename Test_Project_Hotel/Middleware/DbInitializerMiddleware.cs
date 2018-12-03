@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Test_Project_Hotel.Models;
 
 namespace Test_Project_Hotel.Middleware
 {
@@ -19,11 +20,12 @@ namespace Test_Project_Hotel.Middleware
         {
             if (!(context.Session.Keys.Contains("starting")))
             {
+                
                 DbInitializer.Initialize(dbContext);
+
                 context.Session.SetString("starting", "Yes");
             }
-
-            // Call the next delegate/middleware in the pipeline
+            
             return _next.Invoke(context);
         }
     }

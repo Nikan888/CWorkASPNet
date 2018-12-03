@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Test_Project_Hotel.Models;
 
-namespace Test_Project_Hotel.Data
+namespace Test_Project_Hotel.Models
 {
-    public class HotelContext : DbContext
+    public class HotelContext: IdentityDbContext<User>
     {
         public HotelContext(DbContextOptions<HotelContext> options) : base(options)
         {

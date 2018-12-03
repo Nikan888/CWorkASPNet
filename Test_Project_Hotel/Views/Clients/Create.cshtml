@@ -1,34 +1,22 @@
-﻿@model Test_Project_Hotel.Models.Client
+﻿@model Test_Project_Hotel.ViewModels.Clients.CreateClientViewModel
 @{
-    ViewData["Title"] = "Create";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Add client";
 }
-<h2>Создать</h2>
-<h4>Client</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="ClientFIO" class="control-label"></label>
-                <input asp-for="ClientFIO" class="form-control" />
-                <span asp-validation-for="ClientFIO" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ClientPassportData" class="control-label"></label>
-                <input asp-for="ClientPassportData" class="form-control" />
-                <span asp-validation-for="ClientPassportData" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Создать" class="btn btn-default" />
-            </div>
-        </form>
+<h2>Add new client</h2>
+<form asp-action="Create">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="ClientFIO" class="control-label">Client FIO</label>
+            <input type="text" asp-for="ClientFIO" class="form-control" />
+            <label asp-for="ClientPassportData" class="control-label">Client's passport data</label>
+            <input type="text" asp-for="ClientPassportData" class="form-control" />
+        </div>
     </div>
-</div>
-<div>
-    <a asp-action="Index">Вернуться к списку</a>
-</div>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <input type="submit" value="Add" class="btn btn-default" />
+        </div>
+    </div>
+</form>
+<a asp-action="Index" style="float: right;">Back</a>

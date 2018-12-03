@@ -1,45 +1,28 @@
-﻿@model Test_Project_Hotel.Models.Room
+﻿@model Test_Project_Hotel.ViewModels.Rooms.EditRoomViewModel
 @{
-    ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Edit room ";
 }
-<h2>Редактировать</h2>
-<h4>Room</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="RoomID" />
-            <div class="form-group">
-                <label asp-for="RoomType" class="control-label"></label>
-                <input asp-for="RoomType" class="form-control" />
-                <span asp-validation-for="RoomType" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RoomCapacity" class="control-label"></label>
-                <input asp-for="RoomCapacity" class="form-control" />
-                <span asp-validation-for="RoomCapacity" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RoomDescription" class="control-label"></label>
-                <input asp-for="RoomDescription" class="form-control" />
-                <span asp-validation-for="RoomDescription" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RoomPrice" class="control-label"></label>
-                <input asp-for="RoomPrice" class="form-control" />
-                <span asp-validation-for="RoomPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Сохранить" class="btn btn-default" />
-            </div>
-        </form>
+<h2>Edit room </h2>
+<form asp-action="Edit">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="RoomType" class="control-label">Room type</label>
+            <input type="text" asp-for="RoomType" class="form-control" />
+            <label asp-for="RoomDescription" class="control-label">Room description</label>
+            <input type="text" asp-for="RoomDescription" class="form-control" />
+            <label asp-for="RoomCapacity" class="control-label">Room capacity</label>
+            <input type="text" asp-for="RoomCapacity" class="form-control" />
+            <label asp-for="RoomPrice" class="control-label">Room price, USD</label>
+            <input type="text" asp-for="RoomPrice" class="form-control" />
+        </div>
     </div>
-</div>
-<div>
-    <a asp-action="Index">Вернуться к списку</a>
-</div>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <input type="submit" value="Edit" class="btn btn-default" />
+        </div>
+    </div>
+</form>
+<a asp-action="Index" style="float: right;">Back</a>
+

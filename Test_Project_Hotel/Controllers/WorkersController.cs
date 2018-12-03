@@ -1,148 +1,146 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Test_Project_Hotel.Data;
-using Test_Project_Hotel.Infrastructure.Filters;
+using Test_Project_Hotel.ViewModels.Workers;
 using Test_Project_Hotel.Models;
+using System.Collections.Generic;
+using Test_Project_Hotel.ViewModels;
 
 namespace Test_Project_Hotel.Controllers
 {
-    [TypeFilter(typeof(TimingLogAttribute))]
+    [Authorize]
     public class WorkersController : Controller
     {
-        private readonly HotelContext _context;
+        HotelContext db;
 
         public WorkersController(HotelContext context)
         {
-            _context = context;
+            db = context;
         }
 
-        // GET: Workers
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int page = 1)
         {
-            return View(await _context.Workers.ToListAsync());
+            int pageSize = 5;
+            List<WorkerViewModel> list = new List<WorkerViewModel>();
+            var workers = db.Workers;
+            foreach (var worker in workers)
+            {
+                list.Add(new WorkerViewModel
+                {
+                    Id = worker.WorkerID,
+                    WorkerFIO = worker.WorkerFIO,
+                    WorkerPost = worker.WorkerPost
+                });
+            }
+            IQueryable<WorkerViewModel> filterList = list.AsQueryable();
+            var count = filterList.Count();
+            var items = filterList.Skip((page - 1) * pageSize).
+                Take(pageSize).ToList();
+            WorkersListViewModel model = new WorkersListViewModel
+            {
+                PageViewModel = new PageViewModel(count, page, pageSize),
+                Workers = items
+            };
+            return View(model);
         }
 
-        // GET: Workers/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var room = await _context.Workers
-                .SingleOrDefaultAsync(m => m.WorkerID == id);
-            if (room == null)
-            {
-                return NotFound();
-            }
-
-            return View(room);
-        }
-
-        // GET: Workers/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Workers/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WorkerID,WorkerFIO,WorkerPost")] Worker room)
+        public async Task<IActionResult> Create(CreateWorkerViewModel model)
         {
-            if (ModelState.IsValid)
+            int er = 0;
+            if (ModelState.IsValid && (er = db.Workers.Count(p => p.WorkerFIO == model.WorkerFIO)) == 0)
             {
-                _context.Add(room);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                Worker worker = new Worker
+                {
+                    WorkerFIO = model.WorkerFIO,
+                    WorkerPost = model.WorkerPost
+                };
+                await db.Workers.AddAsync(worker);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-            return View(room);
+            if (er != 0)
+                ModelState.AddModelError("WorkerFIO", "Record with the same FIO already exists");
+            return View(model);
         }
 
-        // GET: Workers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id != null)
             {
-                return NotFound();
+                Worker worker = await db.Workers.FirstOrDefaultAsync(t => t.WorkerID == id);
+                if (worker == null)
+                {
+                    ErrorViewModel error = new ErrorViewModel
+                    {
+                        RequestId = "Error! There is no record in the database with the id passed = " + id
+                    };
+                    return View("Error", error);
+                }
+                EditWorkerViewModel model = new EditWorkerViewModel
+                {
+                    Id = worker.WorkerID,
+                    WorkerFIO = worker.WorkerFIO,
+                    WorkerPost = worker.WorkerPost
+                };
+                return View(model);
             }
-
-            var room = await _context.Workers.SingleOrDefaultAsync(m => m.WorkerID == id);
-            if (room == null)
+            else
             {
-                return NotFound();
+                ErrorViewModel error = new ErrorViewModel { RequestId = "Error! Missing id in request parameters" };
+                return View("Error", error);
             }
-            return View(room);
         }
 
-        // POST: Workers/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkerID,WorkerFIO,WorkerPost")] Worker room)
+        public async Task<IActionResult> Edit(EditWorkerViewModel model)
         {
-            if (id != room.WorkerID)
+            int er = 0;
+            Worker worker = await db.Workers.FirstOrDefaultAsync(t => t.WorkerID == model.Id);
+            if (ModelState.IsValid && (model.WorkerFIO == worker.WorkerFIO || (er = db.Workers.Count(p => p.WorkerFIO == model.WorkerFIO)) == 0))
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (worker == null)
                 {
-                    _context.Update(room);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!WorkerExists(room.WorkerID))
+                    ErrorViewModel error = new ErrorViewModel
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                        RequestId = "Error! Empty model was sent"
+                    };
+                    return View("Error", error);
                 }
-                return RedirectToAction(nameof(Index));
+                worker.WorkerFIO = model.WorkerFIO;
+                worker.WorkerPost = model.WorkerPost;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
             }
-            return View(room);
+            if (er != 0)
+                ModelState.AddModelError("WorkerFIO", "Record with the same FIO already exists");
+            return View(model);
         }
 
-        // GET: Workers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            Worker worker = await db.Workers.FirstOrDefaultAsync(t => t.WorkerID == id);
+            db.Workers.Remove(worker);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult AccessDenied(string returnUrl = null)
+        {
+            ErrorViewModel error = new ErrorViewModel
             {
-                return NotFound();
-            }
-
-            var room = await _context.Workers
-                .SingleOrDefaultAsync(m => m.WorkerID == id);
-            if (room == null)
-            {
-                return NotFound();
-            }
-
-            return View(room);
-        }
-
-        // POST: Workers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var room = await _context.Workers.SingleOrDefaultAsync(m => m.WorkerID == id);
-            _context.Workers.Remove(room);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool WorkerExists(int id)
-        {
-            return _context.Workers.Any(e => e.WorkerID == id);
+                RequestId = "For admin access only"
+            };
+            return View("Error", error);
         }
     }
 }

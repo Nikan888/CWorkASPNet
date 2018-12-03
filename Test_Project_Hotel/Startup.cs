@@ -7,56 +7,65 @@ using Test_Project_Hotel.Middleware;
 using Test_Project_Hotel.Data;
 using Test_Project_Hotel.Services;
 using Microsoft.AspNetCore.Mvc;
+using Test_Project_Hotel.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Test_Project_Hotel
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-            builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<HotelContext>(options => options.UseSqlServer(connection));
-            //добавление сессии
+            services.AddDbContext<HotelContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<User, IdentityRole>(opts =>
+            {
+                opts.Password.RequiredLength = 4;
+                opts.Password.RequireNonAlphanumeric = false;
+                opts.Password.RequireUppercase = false;
+                opts.Password.RequireLowercase = false;
+                opts.Password.RequireDigit = true;
+            })
+            .AddEntityFrameworkStores<HotelContext>()
+            .AddDefaultTokenProviders();
+
+            services.AddTransient<HotelService>();
+
+            services.AddMvc(options =>
+            {
+                // определение профилей кэширования
+                options.CacheProfiles.Add("Caching",
+                    new CacheProfile()
+                    {
+                        Duration = 30
+                    });
+                options.CacheProfiles.Add("NoCaching",
+                    new CacheProfile()
+                    {
+                        Location = ResponseCacheLocation.None,
+                        NoStore = true
+                    });
+            });
+            services.AddMemoryCache();
             services.AddDistributedMemoryCache();
             services.AddSession();
-
-            services.AddMvc();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            // добавляем поддержку статических файлов
             app.UseStaticFiles();
 
-            // добавляем поддержку сессий
+            app.UseAuthentication();
             app.UseSession();
-
-            // добавляем компонент middleware по инициализации базы данных и производим инициализацию базы
-            app.UseDbInitializer();
+            app.UseHotelCache("Hotel");
 
             app.UseMvc(routes =>
             {
@@ -64,6 +73,9 @@ namespace Test_Project_Hotel
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // добавляем компонент middleware по инициализации базы данных и производим инициализацию базы
+            app.UseDbInitializer();
         }
     }
 }
