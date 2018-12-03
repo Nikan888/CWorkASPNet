@@ -12,8 +12,5 @@ namespace Test_Project_Hotel.ViewModels
         public IEnumerable<Room> Rooms { get; set; }
         public IEnumerable<Worker> Workers { get; set; }
         public IEnumerable<Service> Services { get; set; }
-
-
-
     }
 }
