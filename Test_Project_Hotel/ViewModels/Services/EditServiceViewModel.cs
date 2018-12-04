@@ -12,8 +12,8 @@ namespace Test_Project_Hotel.ViewModels.Services
         public string ServiceDescription { get; set; }
         public DateTime EntryDate { get; set; }
         public DateTime DepartureDate { get; set; }
-        public int? ClientID { get; set; }
-        public int? WorkerID { get; set; }
-        public int? RoomID { get; set; }
+        public string ClientFIO { get; set; }
+        public string RoomType { get; set; }
+        public string WorkerFIO { get; set; }
     }
 }

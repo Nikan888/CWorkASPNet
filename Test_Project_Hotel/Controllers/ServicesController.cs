@@ -132,9 +132,9 @@ namespace Test_Project_Hotel.Controllers
                     ServiceDescription = service.ServiceDescription,
                     EntryDate = service.EntryDate,
                     DepartureDate = service.DepartureDate,
-                    ClientID = service.ClientID,
-                    WorkerID = service.WorkerID,
-                    RoomID = service.RoomID
+                    ClientFIO = service.Client.ClientFIO,
+                    WorkerFIO = service.Worker.WorkerFIO,
+                    RoomType = service.Room.RoomType
                 };
                 ViewBag.clients = clients;
                 ViewBag.workers = workers;
@@ -148,6 +148,7 @@ namespace Test_Project_Hotel.Controllers
             }
         }
 
+        [HttpPost]
         public async Task<IActionResult> Edit(EditServiceViewModel model)
         {
             Service service = await db.Services.Include("Client").Include("Worker").Include("Room").FirstOrDefaultAsync(t => t.ServiceID == model.Id);

@@ -1,4 +1,7 @@
-﻿@model Test_Project_Hotel.ViewModels.Services.ServicesListViewModel
+﻿@using Microsoft.AspNetCore.Identity
+@model Test_Project_Hotel.ViewModels.Services.ServicesListViewModel
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "Service management";
 }
@@ -27,43 +30,49 @@
             <th style="text-align: center;">
                 Worker FIO
             </th>
-            <th style="text-align: center;">
-                <a class="btn btn-primary" asp-action="Create">Add service</a>
-            </th>
+            @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
+            {
+                <th style="text-align: center;">
+                    <a class="btn btn-primary" asp-action="Create">Add service</a>
+                </th>
+            }
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.Services)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ServiceDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EntryDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DepartureDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientFIO)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RoomType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WorkerFIO)
-            </td>
-            <td>
-                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                    <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.Id"></a>
-                    <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
-                </form>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ServiceDescription)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EntryDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DepartureDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClientFIO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoomType)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.WorkerFIO)
+                </td>
+                @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
+                {
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                            <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.Id"></a>
+                            <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
+                        </form>
+                    </td>
+                }
+            </tr>
         }
     </tbody>
 </table>
