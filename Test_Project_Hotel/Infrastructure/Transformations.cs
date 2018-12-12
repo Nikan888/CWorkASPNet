@@ -32,6 +32,5 @@ namespace Test_Project_Hotel.Infrastructure
             }
             return t;
         }
-
     }
 }

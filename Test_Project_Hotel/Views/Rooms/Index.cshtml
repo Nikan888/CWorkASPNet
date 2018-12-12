@@ -1,26 +1,45 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Test_Project_Hotel.Models
-@model Test_Project_Hotel.ViewModels.Rooms.RoomsListViewModel
+@model Test_Project_Hotel.ViewModels.Rooms.RoomsViewModel
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "Room management";
 }
 <h2>Room management</h2>
+
+<form method="post">
+    <div class="form-inline">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <label class="control-label">Room type </label>
+        @Html.TextBox("type", Model.RoomFilterViewModel.SelectedType,
+                htmlAttributes: new { @class = "form-control", @id = "SelectedType", @type = "string", style = "width:150px" })
+        <input type="submit" value="Find" class="btn btn-default" style='width:90px' />
+    </div>
+</form>
+
 <table class="table table-hover table-bordered text-center" id="tblemps">
     <thead>
         <tr>
             <th style="text-align: center;">
-                Room type
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.RoomSortViewModel.TypeSort)"
+                   asp-route-type="@(Model.RoomFilterViewModel.SelectedType)">Type</a>
             </th>
             <th style="text-align: center;">
-                Room description
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.RoomSortViewModel.DescriptionSort)"
+                   asp-route-type="@(Model.RoomFilterViewModel.SelectedType)">Description</a>
             </th>
             <th style="text-align: center;">
-                Room capacity
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.RoomSortViewModel.CapacitySort)"
+                   asp-route-type="@(Model.RoomFilterViewModel.SelectedType)">Capacity</a>
             </th>
             <th style="text-align: center;">
-                Room price, USD
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.RoomSortViewModel.PriceSort)"
+                   asp-route-type="@(Model.RoomFilterViewModel.SelectedType)">Price, USD</a>
             </th>
             @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
             {
@@ -35,8 +54,8 @@
         {
         <tr>
             <td>
-                @Html.HiddenFor(modelitem => item.Id)
-                <span id="employeename">@item.RoomType</span>
+                @Html.HiddenFor(modelitem => item.RoomID)
+                @Html.DisplayFor(modelItem => item.RoomType)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.RoomDescription)
@@ -50,8 +69,8 @@
             @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
             {
                 <td>
-                    <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                        <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.Id"></a>
+                    <form asp-action="Delete" asp-route-id="@item.RoomID" method="post">
+                        <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.RoomID"></a>
                         <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
                     </form>
                 </td>

@@ -12,26 +12,29 @@ namespace Test_Project_Hotel.Data
         {
             db.Database.EnsureCreated();
 
-            // Проверка занесены ли клиенты
-            if (db.Clients.Any() || db.Workers.Any() || db.Rooms.Any() || db.Services.Any())
-            {
-                return;   // База данных инициализирована
-            }
-
             int clients_number = 35;
             int rooms_number = 35;
             int workers_number = 35;
             int services_number = 300;
+
+            InitializeClients(db, clients_number);
+            InitializeRooms(db, rooms_number);
+            InitializeWorkers(db, workers_number);
+            InitializeServices(db, services_number, clients_number, rooms_number, workers_number);
+        }
+
+        private static void InitializeClients(HotelContext db, int clients_number)
+        {
+            db.Database.EnsureCreated();
+
+            //проверка, занесены ли данные в Clients
+            if (db.Clients.Any())
+            {
+                return; //бд иницилизирована
+            }
+
             string clientFio;
             string clientPassportData;
-            string roomType;
-            int roomCapacity;
-            string roomDescription;
-            decimal roomPrice;
-            string workerFio;
-            string workerPost;
-            string serviceName;
-            string serviceDescription;
 
             Random randObj = new Random(29);
 
@@ -48,6 +51,24 @@ namespace Test_Project_Hotel.Data
             }
             //сохранение изменений в базу данных, связанную с объектом контекста
             db.SaveChanges();
+        }
+
+        private static void InitializeRooms(HotelContext db, int rooms_number)
+        {
+            db.Database.EnsureCreated();
+
+            //проверка, занесены ли данные в Rooms
+            if (db.Rooms.Any())
+            {
+                return; //бд иницилизирована
+            }
+
+            string roomType;
+            int roomCapacity;
+            string roomDescription;
+            decimal roomPrice;
+
+            Random randObj = new Random(29);
 
             //Заполнение таблицы номеров
             string[] roomType_voc = { "single_", "double_", "twin_", "triple_", "deluxe_", "duplex_" };
@@ -70,6 +91,22 @@ namespace Test_Project_Hotel.Data
             }
             //сохранение изменений в базу данных, связанную с объектом контекста
             db.SaveChanges();
+        }
+
+        private static void InitializeWorkers(HotelContext db, int workers_number)
+        {
+            db.Database.EnsureCreated();
+
+            //проверка, занесены ли данные в Workers
+            if (db.Workers.Any())
+            {
+                return; //бд иницилизирована
+            }
+
+            string workerFio;
+            string workerPost;
+
+            Random randObj = new Random(29);
 
             //Заполнение таблицы сотрудников
             string[] workerFio_voc = { "Горбунов_", "Моисеев_", "Громов_", "Васильева_", "Зайцева_" };//словарь фамилий сотрудников
@@ -77,14 +114,31 @@ namespace Test_Project_Hotel.Data
                 "швейцар", "портье", "служба охраны", "инженерная служба" };//словарь должностей
             int count_workerFio_voc = workerFio_voc.GetLength(0);
             int count_workerPost_voc = workerPost_voc.GetLength(0);
-            for (int workerID = 1; workerID <= clients_number; workerID++)
+            for (int workerID = 1; workerID <= workers_number; workerID++)
             {
                 workerFio = workerFio_voc[randObj.Next(count_workerFio_voc)] + workerID.ToString();
-                workerPost = clientPassportData_voc[randObj.Next(count_workerPost_voc)];
+                workerPost = workerPost_voc[randObj.Next(count_workerPost_voc)];
                 db.Workers.Add(new Worker { WorkerFIO = workerFio, WorkerPost = workerPost });
             }
             //сохранение изменений в базу данных, связанную с объектом контекста
             db.SaveChanges();
+        }
+
+        private static void InitializeServices(HotelContext db, int services_number, int clients_number,
+            int rooms_number, int workers_number)
+        {
+            db.Database.EnsureCreated();
+
+            //проверка, занесены ли данные в Services
+            if (db.Services.Any())
+            {
+                return; //бд иницилизирована
+            }
+
+            Random randObj = new Random(29);
+
+            string serviceName;
+            string serviceDescription;
 
             //Заполнение таблицы услуг
             string[] serviceName_voc = { "service1_", "service2_", "service3_", "service4_", "service5_" };

@@ -21,30 +21,48 @@ namespace Test_Project_Hotel.Controllers
             db = context;
         }
 
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(string fio, int page = 1, ClientSortState sortOrder = ClientSortState.FIOAsc)
         {
             int pageSize = 5;
-            List<ClientViewModel> list = new List<ClientViewModel>();
-            var clients = db.Clients;
-            foreach (var client in clients)
+
+            //фильтрация
+            IQueryable<Client> clients = db.Clients;
+            
+            if (!string.IsNullOrEmpty(fio))
             {
-                list.Add(new ClientViewModel
-                {
-                    Id = client.ClientID,
-                    ClientFIO = client.ClientFIO,
-                    ClientPassportData = client.ClientPassportData
-                });
+                clients = clients.Where(p => p.ClientFIO.Contains(fio));
             }
-            IQueryable<ClientViewModel> filterList = list.AsQueryable();
-            var count = filterList.Count();
-            var items = filterList.Skip((page - 1) * pageSize).
-                Take(pageSize).ToList();
-            ClientsListViewModel model = new ClientsListViewModel
+
+            // сортировка
+            switch (sortOrder)
+            {
+                case ClientSortState.FIODesc:
+                    clients = clients.OrderByDescending(s => s.ClientFIO);
+                    break;
+                case ClientSortState.PassportDataAsc:
+                    clients = clients.OrderBy(s => s.ClientPassportData);
+                    break;
+                case ClientSortState.PassportDataDesc:
+                    clients = clients.OrderByDescending(s => s.ClientPassportData);
+                    break;
+                default:
+                    clients = clients.OrderBy(s => s.ClientFIO);
+                    break;
+            }
+
+            // пагинация
+            var count = await clients.CountAsync();
+            var items = await clients.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            // формируем модель представления
+            ClientsViewModel viewModel = new ClientsViewModel
             {
                 PageViewModel = new PageViewModel(count, page, pageSize),
+                ClientSortViewModel = new ClientSortViewModel(sortOrder),
+                ClientFilterViewModel = new ClientFilterViewModel(fio),
                 Clients = items
             };
-            return View(model);
+            return View(viewModel);
         }
 
         public IActionResult Create()

@@ -59,7 +59,7 @@ namespace Test_Project_Hotel
             services.AddSession();
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, HotelContext context)
         {
             app.UseStaticFiles();
 
@@ -70,12 +70,12 @@ namespace Test_Project_Hotel
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                name: "default",
+                template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            // добавляем компонент middleware по инициализации базы данных и производим инициализацию базы
-            app.UseDbInitializer();
+            // инициализация базы данных
+            DbInitializer.Initialize(context);
         }
     }
 }

@@ -7,7 +7,6 @@ namespace Test_Project_Hotel.Infrastructure.Filters
     //Фильтр действий для запись в сессию данных из ModelState
     public class SetToSessionAttribute : Attribute, IActionFilter
     {
-
         private string name;//имя ключа
 
         public SetToSessionAttribute(string name)

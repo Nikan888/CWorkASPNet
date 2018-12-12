@@ -1,20 +1,35 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Test_Project_Hotel.Models
-@model Test_Project_Hotel.ViewModels.Workers.WorkersListViewModel
+@model Test_Project_Hotel.ViewModels.Workers.WorkersViewModel
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "Worker management";
 }
 <h2>Worker management</h2>
+
+<form method="post">
+    <div class="form-inline">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <label class="control-label">Client FIO </label>
+        @Html.TextBox("fio", Model.WorkerFilterViewModel.SelectedFIO,
+                htmlAttributes: new { @class = "form-control", @id = "SelectedFIO", @type = "string", style = "width:150px" })
+        <input type="submit" value="Find" class="btn btn-default" style='width:90px' />
+    </div>
+</form>
+
 <table class="table table-hover table-bordered text-center" id="tblemps">
     <thead>
         <tr>
             <th style="text-align: center;">
-                Worker FIO
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.WorkerSortViewModel.FIOSort)"
+                   asp-route-fio="@(Model.WorkerFilterViewModel.SelectedFIO)">FIO</a>
             </th>
             <th style="text-align: center;">
-                Worker's post
+                <a asp-action="Index"
+                   asp-route-sortOrder="@(Model.WorkerSortViewModel.PostSort)"
+                   asp-route-fio="@(Model.WorkerFilterViewModel.SelectedFIO)">Post</a>
             </th>
             @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
             {
@@ -29,8 +44,8 @@
         {
             <tr>
                 <td>
-                    @Html.HiddenFor(modelitem => item.Id)
-                    <span id="employeename">@item.WorkerFIO</span>
+                    @Html.HiddenFor(modelitem => item.WorkerID)
+                    @Html.DisplayFor(modelItem => item.WorkerFIO)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.WorkerPost)
@@ -38,8 +53,8 @@
                 @if (await UserManager.IsInRoleAsync(await UserManager.GetUserAsync(User), "admin"))
                 {
                     <td>
-                        <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                            <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.Id"></a>
+                        <form asp-action="Delete" asp-route-id="@item.WorkerID" method="post">
+                            <a class="btn btn-sm btn-success glyphicon glyphicon-pencil" asp-action="Edit" asp-route-id="@item.WorkerID"></a>
                             <button type="submit" class="btn btn-sm btn-danger glyphicon glyphicon-trash"></button>
                         </form>
                     </td>

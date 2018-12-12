@@ -21,32 +21,60 @@ namespace Test_Project_Hotel.Controllers
             db = context;
         }
 
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(string type, int page = 1, RoomSortState sortOrder = RoomSortState.TypeAsc)
         {
             int pageSize = 5;
-            List<RoomViewModel> list = new List<RoomViewModel>();
-            var rooms = db.Rooms;
-            foreach (var room in rooms)
+
+            //фильтрация
+            IQueryable<Room> rooms = db.Rooms;
+
+            if (!string.IsNullOrEmpty(type))
             {
-                list.Add(new RoomViewModel
-                {
-                    Id = room.RoomID,
-                    RoomType = room.RoomType,
-                    RoomCapacity = room.RoomCapacity,
-                    RoomDescription = room.RoomDescription,
-                    RoomPrice = room.RoomPrice
-                });
+                rooms = rooms.Where(p => p.RoomType.Contains(type));
             }
-            IQueryable<RoomViewModel> filterList = list.AsQueryable();
-            var count = filterList.Count();
-            var items = filterList.Skip((page - 1) * pageSize).
-                Take(pageSize).ToList();
-            RoomsListViewModel model = new RoomsListViewModel
+
+            // сортировка
+            switch (sortOrder)
+            {
+                case RoomSortState.TypeDesc:
+                    rooms = rooms.OrderByDescending(s => s.RoomType);
+                    break;
+                case RoomSortState.CapacityAsc:
+                    rooms = rooms.OrderBy(s => s.RoomCapacity);
+                    break;
+                case RoomSortState.CapacityDesc:
+                    rooms = rooms.OrderByDescending(s => s.RoomCapacity);
+                    break;
+                case RoomSortState.DescriptionAsc:
+                    rooms = rooms.OrderBy(s => s.RoomDescription);
+                    break;
+                case RoomSortState.DescriptionDesc:
+                    rooms = rooms.OrderByDescending(s => s.RoomDescription);
+                    break;
+                case RoomSortState.PriceAsc:
+                    rooms = rooms.OrderBy(s => s.RoomPrice);
+                    break;
+                case RoomSortState.PriceDesc:
+                    rooms = rooms.OrderByDescending(s => s.RoomPrice);
+                    break;
+                default:
+                    rooms = rooms.OrderBy(s => s.RoomType);
+                    break;
+            }
+
+            // пагинация
+            var count = await rooms.CountAsync();
+            var items = await rooms.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            // формируем модель представления
+            RoomsViewModel viewModel = new RoomsViewModel
             {
                 PageViewModel = new PageViewModel(count, page, pageSize),
+                RoomSortViewModel = new RoomSortViewModel(sortOrder),
+                RoomFilterViewModel = new RoomFilterViewModel(type),
                 Rooms = items
             };
-            return View(model);
+            return View(viewModel);
         }
 
         public IActionResult Create()

@@ -29,7 +29,5 @@ namespace Test_Project_Hotel.Infrastructure
             var value = session.GetString(key);
             return value == null ? default(Dictionary<string, string>) : JsonConvert.DeserializeObject<Dictionary<string, string>>(value);
         }
-
-
     }
 }

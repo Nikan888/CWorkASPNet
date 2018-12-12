@@ -15,5 +15,8 @@ namespace Test_Project_Hotel.ViewModels.Services
         public string ClientFIO { get; set; }
         public string RoomType { get; set; }
         public string WorkerFIO { get; set; }
+
+        // Порядок сортировки
+        public SortViewModel SortViewModel { get; set; }
     }
 }

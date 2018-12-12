@@ -21,30 +21,48 @@ namespace Test_Project_Hotel.Controllers
             db = context;
         }
 
-        public IActionResult Index(int page = 1)
+        public async Task<IActionResult> Index(string fio, int page = 1, WorkerSortState sortOrder = WorkerSortState.FIOAsc)
         {
             int pageSize = 5;
-            List<WorkerViewModel> list = new List<WorkerViewModel>();
-            var workers = db.Workers;
-            foreach (var worker in workers)
+
+            //фильтрация
+            IQueryable<Worker> workers = db.Workers;
+
+            if (!string.IsNullOrEmpty(fio))
             {
-                list.Add(new WorkerViewModel
-                {
-                    Id = worker.WorkerID,
-                    WorkerFIO = worker.WorkerFIO,
-                    WorkerPost = worker.WorkerPost
-                });
+                workers = workers.Where(p => p.WorkerFIO.Contains(fio));
             }
-            IQueryable<WorkerViewModel> filterList = list.AsQueryable();
-            var count = filterList.Count();
-            var items = filterList.Skip((page - 1) * pageSize).
-                Take(pageSize).ToList();
-            WorkersListViewModel model = new WorkersListViewModel
+
+            // сортировка
+            switch (sortOrder)
+            {
+                case WorkerSortState.FIODesc:
+                    workers = workers.OrderByDescending(s => s.WorkerFIO);
+                    break;
+                case WorkerSortState.PostAsc:
+                    workers = workers.OrderBy(s => s.WorkerPost);
+                    break;
+                case WorkerSortState.PostDesc:
+                    workers = workers.OrderByDescending(s => s.WorkerPost);
+                    break;
+                default:
+                    workers = workers.OrderBy(s => s.WorkerFIO);
+                    break;
+            }
+
+            // пагинация
+            var count = await workers.CountAsync();
+            var items = await workers.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            // формируем модель представления
+            WorkersViewModel viewModel = new WorkersViewModel
             {
                 PageViewModel = new PageViewModel(count, page, pageSize),
+                WorkerSortViewModel = new WorkerSortViewModel(sortOrder),
+                WorkerFilterViewModel = new WorkerFilterViewModel(fio),
                 Workers = items
             };
-            return View(model);
+            return View(viewModel);
         }
 
         public IActionResult Create()

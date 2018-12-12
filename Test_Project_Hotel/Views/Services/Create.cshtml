@@ -4,7 +4,37 @@
 }
 <h2>Add service</h2>
 <form asp-action="Create">
+
     <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="ServiceName" class="control-label">Service name</label>
+            <input type="text" asp-for="ServiceName" class="form-control" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="ServiceDescription" class="control-label">Service description</label>
+            <input type="text" asp-for="ServiceDescription" class="form-control" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="EntryDate" class="control-label">Entry date</label>
+            <input type="date" asp-for="EntryDate" class="form-control" />
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-xs-4">
+            <label asp-for="DepartureDate" class="control-label">Departure date</label>
+            <input type="date" asp-for="DepartureDate" class="form-control" />
+        </div>
+    </div>
+
     <div class="form-group row">
         <div class="col-xs-4">
             <label asp-for="ClientID" class="control-label">Client</label>
@@ -18,6 +48,7 @@
             </div>
         </div>
     </div>
+
     <div class="form-group row">
         <div class="col-xs-4">
             <label asp-for="RoomID" class="control-label">Room</label>
@@ -31,9 +62,10 @@
             </div>
         </div>
     </div>
+
     <div class="form-group row">
         <div class="col-xs-4">
-            <label asp-for="WorkerID" class="control-label">Сотрудник</label>
+            <label asp-for="WorkerID" class="control-label">Worker</label>
             <div id="g">
                 <select asp-for="WorkerID" class="form-control">
                     @foreach (var item in ViewBag.workers)
@@ -44,10 +76,12 @@
             </div>
         </div>
     </div>
+
     <div class="form-group row">
         <div class="col-xs-4">
             <input type="submit" value="Add" class="btn btn-default" />
         </div>
     </div>
+
 </form>
 <a asp-action="Index" style="float: right;">Back</a>
